@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KhataSaathi — Financial Inclusion Toolkit for Micro Businesses</title>
+<meta name="description" content="A mobile-first, voice-driven ledger and credit-readiness toolkit for India's micro merchants. MUJ HackX 4.0 — Problem Statement 6.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📒</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Noto+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   TOKENS
+============================================================ */
+:root{
+  --ink:            #EDE7D6;
+  --ink-dim:        #B7BFD6;
+  --ink-strong:     #FFFBF1;
+  --bg-deep:        #0F1A30;
+  --bg-deeper:      #0A1322;
+  --surface:        #172645;
+  --surface-2:      #1E3155;
+  --surface-line:   rgba(237,231,214,0.10);
+  --paper:          #F3E9D2;
+  --paper-2:        #ECE0C3;
+  --paper-line:     #D9C79C;
+  --paper-ink:      #2B2312;
+  --saffron:        #E7A23A;
+  --saffron-deep:   #C77F1E;
+  --thread:         #C6474F;
+  --thread-deep:    #9E343B;
+  --leaf:           #3E8B63;
+  --leaf-deep:      #2C6B4A;
+  --radius-lg:      26px;
+  --radius-md:      16px;
+  --radius-sm:      10px;
+  --font-display:   'Fraunces', serif;
+  --font-body:      'Noto Sans', system-ui, sans-serif;
+  --shadow-deep:    0 30px 60px -25px rgba(0,0,0,0.55);
+  --ease:           cubic-bezier(.22,.85,.32,1);
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{
+  margin:0;
+  background: radial-gradient(ellipse 90% 60% at 50% -10%, #1a2c52 0%, var(--bg-deep) 55%, var(--bg-deeper) 100%);
+  color:var(--ink);
+  font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+img,svg{ display:block; max-width:100%; }
+a{ color:inherit; }
+h1,h2,h3,h4{ font-family:var(--font-display); font-weight:600; margin:0; color:var(--ink-strong); }
+p{ margin:0; }
+button{ font-family:inherit; }
+::selection{ background:var(--saffron); color:#1a1204; }
+
+.icon{ width:20px; height:20px; stroke:currentColor; stroke-width:1.8; fill:none; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important; }
+}
+
+:focus-visible{ outline:2px solid var(--saffron); outline-offset:3px; border-radius:4px; }
+
+.wrap{ max-width:1180px; margin:0 auto; padding:0 28px; }
+
+/* ============================================================
+   THREAD DIVIDER (ledger-stitch motif)
+============================================================ */
+.thread{
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  padding:0; margin:0; height:1px; position:relative;
+}
+.thread::before{
+  content:""; position:absolute; left:0; right:0; top:50%;
+  border-top:1.5px dashed rgba(198,71,79,0.45);
+}
+.thread span{
+  position:relative; width:7px; height:7px; border-radius:50%;
+  background:var(--thread); box-shadow:0 0 0 4px var(--bg-deep);
+}
+
+/* ============================================================
+   NAV
+============================================================ */
+.nav{
+  position:sticky; top:0; z-index:50;
+  backdrop-filter:blur(14px) saturate(140%);
+  background:rgba(10,19,34,0.72);
+  border-bottom:1px solid var(--surface-line);
+}
+.nav .wrap{ display:flex; align-items:center; justify-content:space-between; height:72px; }
+.brand{ display:flex; align-items:center; gap:10px; font-family:var(--font-display); font-weight:600; font-size:1.28rem; color:var(--ink-strong); text-decoration:none; letter-spacing:.2px; }
+.brand-mark{ width:34px; height:34px; border-radius:9px; background:linear-gradient(155deg,var(--saffron),var(--saffron-deep)); display:flex; align-items:center; justify-content:center; box-shadow:0 6px 16px -6px rgba(231,162,58,.6); }
+.brand-mark svg{ width:18px; height:18px; stroke:#1a1204; }
+.nav-links{ display:flex; gap:34px; list-style:none; margin:0; padding:0; font-size:.94rem; color:var(--ink-dim); }
+.nav-links a{ text-decoration:none; transition:color .2s var(--ease); position:relative; }
+.nav-links a:hover{ color:var(--ink-strong); }
+.nav-cta{
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--saffron); color:#1a1204; border:none;
+  padding:11px 20px; border-radius:100px; font-weight:700; font-size:.92rem;
+  cursor:pointer; transition:transform .25s var(--ease), box-shadow .25s var(--ease);
+  box-shadow:0 10px 24px -12px rgba(231,162,58,.7);
+  text-decoration:none;
+}
+.nav-cta:hover{ transform:translateY(-2px); box-shadow:0 16px 30px -12px rgba(231,162,58,.85); }
+.nav-toggle{ display:none; background:none; border:none; color:var(--ink-strong); cursor:pointer; padding:6px; }
+.nav-toggle .icon{ width:26px; height:26px; }
+
+@media (max-width:860px){
+  .nav-links{ display:none; }
+  .nav-toggle{ display:block; }
+}
+
+/* ============================================================
+   HERO
+============================================================ */
+.hero{ position:relative; padding:76px 0 90px; overflow:hidden; }
+.hero::before{
+  content:""; position:absolute; inset:-20% -10% auto -10%; height:600px;
+  background:radial-gradient(closest-side, rgba(231,162,58,0.16), transparent 70%);
+  pointer-events:none;
+}
+.hero-grid{ display:grid; grid-template-columns:1.05fr .95fr; gap:64px; align-items:center; position:relative; }
+.hero-eyebrow-row{ display:flex; align-items:center; gap:10px; margin-bottom:22px; }
+.pill{
+  display:inline-flex; align-items:center; gap:7px;
+  background:var(--surface); border:1px solid var(--surface-line);
+  padding:7px 14px 7px 8px; border-radius:100px; font-size:.8rem; color:var(--ink-dim);
+}
+.pill .dot{ width:7px; height:7px; border-radius:50%; background:var(--leaf); box-shadow:0 0 0 3px rgba(62,139,99,.25); }
+.hero h1{
+  font-size:clamp(2.4rem, 4.1vw, 3.55rem); line-height:1.08; letter-spacing:-.5px;
+  max-width:12.5ch;
+}
+.hero h1 em{ font-style:italic; color:var(--saffron); }
+.hero-sub{ margin-top:22px; font-size:1.1rem; line-height:1.65; color:var(--ink-dim); max-width:46ch; }
+.hero-actions{ display:flex; gap:14px; margin-top:34px; flex-wrap:wrap; }
+.btn{
+  display:inline-flex; align-items:center; gap:9px; border-radius:100px; padding:14px 26px;
+  font-weight:700; font-size:.98rem; cursor:pointer; border:none; text-decoration:none;
+  transition:transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease);
+}
+.btn-primary{ background:var(--saffron); color:#1a1204; box-shadow:0 14px 28px -14px rgba(231,162,58,.7); }
+.btn-primary:hover{ transform:translateY(-2px); box-shadow:0 18px 34px -14px rgba(231,162,58,.85); }
+.btn-ghost{ background:transparent; color:var(--ink-strong); border:1px solid var(--surface-line); }
+.btn-ghost:hover{ background:var(--surface); border-color:rgba(237,231,214,.28); }
+
+.hero-proof{ display:flex; gap:30px; margin-top:44px; flex-wrap:wrap; }
+.proof-item{ display:flex; flex-direction:column; gap:2px; }
+.proof-num{ font-family:var(--font-display); font-size:1.7rem; color:var(--ink-strong); font-weight:600; }
+.proof-label{ font-size:.8rem; color:var(--ink-dim); max-width:16ch; line-height:1.35; }
+
+/* hero mock illustration */
+.hero-mock{ position:relative; display:flex; justify-content:center; }
+.mock-card{
+  width:300px; background:linear-gradient(180deg,var(--paper),var(--paper-2));
+  border-radius:22px; padding:22px 20px 26px; box-shadow:var(--shadow-deep);
+  transform:rotate(-3.2deg); position:relative; color:var(--paper-ink);
+  border:1px solid var(--paper-line);
+}
+.mock-card::after{
+  content:""; position:absolute; left:18px; top:0; bottom:0; width:1px;
+  background:repeating-linear-gradient(to bottom, transparent 0 6px, var(--thread) 6px 8px); opacity:.35;
+}
+.mock-row-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; padding-left:16px;}
+.mock-row-head span:first-child{ font-family:var(--font-display); font-weight:600; font-size:1.02rem; }
+.mock-badge{ background:var(--leaf); color:#fff; font-size:.68rem; font-weight:700; padding:3px 9px; border-radius:100px; }
+.mock-line{ display:flex; justify-content:space-between; padding:10px 0 10px 16px; border-bottom:1px dashed var(--paper-line); font-size:.85rem; }
+.mock-line b{ font-weight:700; }
+.mock-line.credit b{ color:var(--thread-deep); }
+.mock-line.sale b{ color:var(--leaf-deep); }
+.mock-mic{
+  position:absolute; right:-16px; bottom:-16px; width:64px; height:64px; border-radius:50%;
+  background:var(--saffron); display:flex; align-items:center; justify-content:center;
+  box-shadow:0 16px 30px -10px rgba(231,162,58,.75); border:5px solid var(--bg-deep);
+}
+.mock-mic svg{ width:24px; height:24px; stroke:#1a1204; }
+.mock-mic::before,.mock-mic::after{
+  content:""; position:absolute; inset:0; border-radius:50%; border:2px solid var(--saffron);
+  animation:mic-ping 2.4s var(--ease) infinite;
+}
+.mock-mic::after{ animation-delay:1.2s; }
+@keyframes mic-ping{ 0%{ transform:scale(1); opacity:.7;} 100%{ transform:scale(1.9); opacity:0;} }
+
+.float-card{
+  position:absolute; background:var(--surface); border:1px solid var(--surface-line);
+  border-radius:14px; padding:12px 14px; box-shadow:var(--shadow-deep);
+  display:flex; align-items:center; gap:10px; font-size:.8rem;
+  animation:float-y 5s var(--ease) infinite;
+}
+.float-card .icon-wrap{ width:30px; height:30px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+.float-card.f1{ top:-10px; left:-42px; animation-delay:.2s; }
+.float-card.f1 .icon-wrap{ background:rgba(62,139,99,.18); }
+.float-card.f1 .icon{ stroke:var(--leaf); }
+.float-card.f2{ bottom:36px; right:-52px; animation-delay:1.4s; }
+.float-card.f2 .icon-wrap{ background:rgba(199,127,30,.2); }
+.float-card.f2 .icon{ stroke:var(--saffron); }
+@keyframes float-y{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-9px);} }
+
+@media (max-width:980px){
+  .hero-grid{ grid-template-columns:1fr; }
+  .hero-mock{ margin-top:20px; }
+  .float-card{ display:none; }
+}
+
+/* ============================================================
+   STAT STRIP
+============================================================ */
+.stat-strip{ border-top:1px solid var(--surface-line); border-bottom:1px solid var(--surface-line); background:rgba(255,255,255,0.015); }
+.stat-strip .wrap{ display:grid; grid-template-columns:repeat(4,1fr); padding:36px 28px; gap:20px; }
+.stat{ text-align:left; padding-right:20px; border-right:1px solid var(--surface-line); }
+.stat:last-child{ border-right:none; }
+.stat-num{ font-family:var(--font-display); font-size:2.1rem; color:var(--saffron); font-weight:600; }
+.stat-cap{ font-size:.82rem; color:var(--ink-dim); margin-top:4px; line-height:1.4; }
+@media (max-width:760px){ .stat-strip .wrap{ grid-template-columns:1fr 1fr; } .stat{ border-right:none; } }
+
+/* ============================================================
+   SECTION HEADERS
+============================================================ */
+.section{ padding:104px 0; }
+.section-head{ max-width:640px; margin-bottom:56px; }
+.section-head h2{ font-size:clamp(1.9rem,3vw,2.6rem); line-height:1.15; letter-spacing:-.3px; }
+.section-head p{ margin-top:16px; color:var(--ink-dim); font-size:1.05rem; line-height:1.65; }
+.section-tag{ color:var(--saffron); font-family:var(--font-display); font-style:italic; font-size:1.05rem; }
+
+/* ============================================================
+   PROBLEM SECTION
+============================================================ */
+.problem{ display:grid; grid-template-columns:1fr 1fr; gap:70px; align-items:center; }
+.problem-copy p{ color:var(--ink-dim); font-size:1.04rem; line-height:1.75; margin-bottom:18px; }
+.problem-copy p:last-child{ margin-bottom:0; }
+.problem-copy strong{ color:var(--ink-strong); font-weight:600; }
+.ledger-illus{
+  background:linear-gradient(180deg,var(--paper),var(--paper-2)); border-radius:var(--radius-lg);
+  padding:30px 26px; color:var(--paper-ink); box-shadow:var(--shadow-deep); border:1px solid var(--paper-line);
+  position:relative;
+}
+.ledger-illus h4{ font-size:1rem; color:var(--paper-ink); margin-bottom:16px; }
+.ledger-illus .torn{ position:absolute; left:0; right:0; bottom:-1px; height:14px;
+  background:linear-gradient(135deg, var(--bg-deep) 25%, transparent 25.5%) 0 0/14px 14px,
+             linear-gradient(-135deg, var(--bg-deep) 25%, transparent 25.5%) 0 0/14px 14px;
+  background-repeat:repeat-x;
+}
+.receipt-line{ display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px dashed var(--paper-line); font-size:.88rem; }
+.receipt-line span:last-child{ font-weight:700; }
+.receipt-line.total{ border-bottom:none; padding-top:14px; font-family:var(--font-display); font-size:1.05rem; }
+.receipt-line.miss span:last-child{ color:var(--thread-deep); }
+
+@media (max-width:920px){ .problem{ grid-template-columns:1fr; } }
+
+/* ============================================================
+   FEATURES GRID
+============================================================ */
+.features{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+.f-card{
+  background:var(--surface); border:1px solid var(--surface-line); border-radius:var(--radius-md);
+  padding:26px 24px; transition:transform .3s var(--ease), border-color .3s var(--ease), background .3s var(--ease);
+}
+.f-card:hover{ transform:translateY(-5px); border-color:rgba(231,162,58,.4); background:var(--surface-2); }
+.f-icon{ width:42px; height:42px; border-radius:11px; display:flex; align-items:center; justify-content:center; margin-bottom:18px; }
+.f-icon .icon{ width:21px; height:21px; }
+.f-card h3{ font-size:1.08rem; margin-bottom:9px; }
+.f-card p{ color:var(--ink-dim); font-size:.92rem; line-height:1.58; }
+.f-card.bonus{ background:linear-gradient(160deg, rgba(231,162,58,.14), var(--surface)); border-color:rgba(231,162,58,.35); grid-column:span 3; display:flex; align-items:center; gap:26px; padding:28px 30px; }
+.f-card.bonus .f-icon{ margin-bottom:0; flex-shrink:0; }
+.f-card.bonus .bonus-copy h3{ display:flex; align-items:center; gap:9px; }
+.f-card.bonus .bonus-copy h3 small{ font-family:var(--font-body); font-size:.68rem; background:var(--saffron); color:#1a1204; padding:3px 9px; border-radius:100px; font-weight:800; letter-spacing:.3px; }
+
+@media (max-width:920px){ .features{ grid-template-columns:1fr 1fr; } .f-card.bonus{ grid-column:span 2; flex-direction:column; align-items:flex-start; } }
+@media (max-width:640px){ .features{ grid-template-columns:1fr; } .f-card.bonus{ grid-column:span 1; } }
+
+/* ============================================================
+   LIVE DEMO — PHONE
+============================================================ */
+.demo{ position:relative; }
+.demo-shell{ display:grid; grid-template-columns:.85fr 1.15fr; gap:56px; align-items:center; }
+.demo-copy{ position:sticky; top:110px; }
+.demo-steps{ display:flex; flex-direction:column; gap:4px; margin-top:30px; }
+.demo-step{
+  display:flex; gap:14px; padding:15px 14px; border-radius:12px; cursor:pointer;
+  border:1px solid transparent; transition:background .25s var(--ease), border-color .25s var(--ease);
+}
+.demo-step:hover{ background:var(--surface); }
+.demo-step.active{ background:var(--surface-2); border-color:rgba(231,162,58,.4); }
+.demo-step .num{
+  width:30px; height:30px; border-radius:9px; background:var(--surface); border:1px solid var(--surface-line);
+  display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:.85rem;
+  color:var(--ink-dim); flex-shrink:0; transition:all .25s var(--ease);
+}
+.demo-step.active .num{ background:var(--saffron); color:#1a1204; border-color:var(--saffron); }
+.demo-step h4{ font-size:.98rem; margin-bottom:3px; color:var(--ink-strong); }
+.demo-step p{ font-size:.85rem; color:var(--ink-dim); line-height:1.5; }
+
+.phone-stage{ display:flex; justify-content:center; }
+.phone{
+  width:346px; height:706px; background:#0a0f1e; border-radius:46px; padding:14px;
+  box-shadow:var(--shadow-deep), inset 0 0 0 2px rgba(255,255,255,0.04);
+  position:relative;
+}
+.phone::before{
+  content:""; position:absolute; top:14px; left:50%; transform:translateX(-50%);
+  width:112px; height:22px; background:#0a0f1e; border-radius:0 0 16px 16px; z-index:5;
+}
+.phone-screen{
+  width:100%; height:100%; background:var(--paper); border-radius:32px; overflow:hidden;
+  position:relative; display:flex; flex-direction:column; color:var(--paper-ink);
+}
+.phone-topbar{
+  display:flex; align-items:center; justify-content:space-between; padding:20px 18px 10px;
+  flex-shrink:0; background:var(--paper);
+}
+.phone-brand{ display:flex; align-items:center; gap:8px; font-family:var(--font-display); font-weight:600; }
+.phone-brand .dot-mark{ width:22px; height:22px; border-radius:6px; background:linear-gradient(155deg,var(--saffron),var(--saffron-deep)); }
+.phone-actions{ display:flex; align-items:center; gap:8px; }
+.chip-btn{
+  border:none; background:var(--paper-2); width:32px; height:32px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--paper-ink);
+  transition:background .2s;
+}
+.chip-btn .icon{ width:16px; height:16px; }
+.chip-btn:hover{ background:#e2d3ac; }
+.chip-btn.offline-on{ background:var(--thread); color:#fff; }
+.chip-btn.offline-on .icon{ stroke:#fff; }
+
+.phone-body{ flex:1; overflow-y:auto; padding:6px 18px 90px; scrollbar-width:none; }
+.phone-body::-webkit-scrollbar{ display:none; }
+
+.screen{ display:none; animation:screen-in .35s var(--ease); }
+.screen.active{ display:block; }
+@keyframes screen-in{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:translateY(0);} }
+
+/* --- home screen --- */
+.greet{ margin:6px 0 16px; }
+.greet .hi{ font-size:.78rem; color:#7a6c47; }
+.greet .name{ font-family:var(--font-display); font-size:1.28rem; font-weight:600; }
+.summary-card{
+  background:linear-gradient(150deg,#233457,#14213d); color:#fff; border-radius:18px; padding:18px;
+  margin-bottom:16px; position:relative; overflow:hidden;
+}
+.summary-card::after{ content:""; position:absolute; right:-30px; top:-30px; width:120px; height:120px; border-radius:50%; background:rgba(231,162,58,.18); }
+.summary-top{ display:flex; justify-content:space-between; align-items:flex-start; }
+.summary-label{ font-size:.72rem; color:#aeb7d1; }
+.summary-amt{ font-family:var(--font-display); font-size:1.85rem; font-weight:600; margin-top:2px; }
+.trend-pill{ font-size:.68rem; background:rgba(62,139,99,.25); color:#8fe0b5; padding:4px 9px; border-radius:100px; font-weight:700; }
+.summary-split{ display:flex; gap:10px; margin-top:16px; }
+.split-item{ flex:1; background:rgba(255,255,255,.06); border-radius:12px; padding:10px 12px; }
+.split-item .lbl{ font-size:.68rem; color:#aeb7d1; }
+.split-item .val{ font-weight:700; margin-top:3px; font-size:.95rem; }
+.split-item.sale .val{ color:#8fe0b5; }
+.split-item.exp .val{ color:#f3a5a5; }
+
+.quick-actions{ display:flex; gap:10px; margin-bottom:18px; }
+.qa-btn{
+  flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; padding:13px 6px;
+  background:var(--paper-2); border:1px solid var(--paper-line); border-radius:14px; cursor:pointer;
+  font-size:.7rem; font-weight:700; color:var(--paper-ink); transition:transform .2s var(--ease), background .2s;
+}
+.qa-btn:hover{ transform:translateY(-2px); background:#e6d8b2; }
+.qa-btn .icon-circ{ width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+.qa-btn .icon{ width:15px; height:15px; }
+
+.section-label{ font-size:.72rem; font-weight:700; color:#7a6c47; text-transform:uppercase; letter-spacing:.6px; margin:16px 0 10px; }
+.alert-banner{
+  display:flex; gap:10px; align-items:flex-start; background:rgba(198,71,79,.1); border:1px solid rgba(198,71,79,.3);
+  padding:12px 13px; border-radius:12px; margin-bottom:16px; font-size:.78rem; line-height:1.5;
+}
+.alert-banner .icon{ stroke:var(--thread-deep); width:17px; height:17px; margin-top:1px; flex-shrink:0; }
+.alert-banner b{ color:var(--thread-deep); }
+
+.tx-row{ display:flex; align-items:center; gap:11px; padding:10px 0; border-bottom:1px dashed var(--paper-line); }
+.tx-row:last-child{ border-bottom:none; }
+.tx-ic{ width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.tx-ic .icon{ width:15px; height:15px; }
+.tx-info{ flex:1; min-width:0; }
+.tx-info .t1{ font-size:.85rem; font-weight:600; }
+.tx-info .t2{ font-size:.72rem; color:#8a7c53; }
+.tx-amt{ font-weight:700; font-size:.87rem; }
+.tx-amt.pos{ color:var(--leaf-deep); }
+.tx-amt.neg{ color:var(--thread-deep); }
+
+/* --- voice screen --- */
+.lang-row{ display:flex; gap:8px; overflow-x:auto; padding:4px 0 16px; scrollbar-width:none; }
+.lang-row::-webkit-scrollbar{ display:none; }
+.lang-chip{
+  flex-shrink:0; border:1px solid var(--paper-line); background:var(--paper-2); padding:8px 14px;
+  border-radius:100px; font-size:.78rem; font-weight:700; cursor:pointer; color:#6b5d38;
+  transition:all .2s var(--ease);
+}
+.lang-chip.active{ background:var(--saffron); border-color:var(--saffron); color:#1a1204; }
+.mic-stage{ display:flex; flex-direction:column; align-items:center; padding:26px 0 10px; }
+.mic-big{
+  width:104px; height:104px; border-radius:50%; background:linear-gradient(155deg,var(--saffron),var(--saffron-deep));
+  border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; position:relative;
+  box-shadow:0 18px 30px -12px rgba(231,162,58,.6); transition:transform .2s var(--ease);
+}
+.mic-big:hover{ transform:scale(1.04); }
+.mic-big .icon{ width:34px; height:34px; stroke:#1a1204; stroke-width:1.6; }
+.mic-big.listening{ animation:mic-pulse 1s ease-in-out infinite; }
+@keyframes mic-pulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(231,162,58,.5);} 50%{ box-shadow:0 0 0 22px rgba(231,162,58,0);} }
+.mic-status{ margin-top:16px; font-size:.85rem; color:#7a6c47; min-height:20px; text-align:center; }
+.wave{ display:flex; align-items:center; gap:4px; height:26px; margin-top:14px; opacity:0; transition:opacity .2s; }
+.wave.show{ opacity:1; }
+.wave span{ width:4px; border-radius:3px; background:var(--saffron-deep); animation:wave-bar 1s ease-in-out infinite; }
+.wave span:nth-child(1){ height:8px; animation-delay:0s;} .wave span:nth-child(2){ height:18px; animation-delay:.1s;}
+.wave span:nth-child(3){ height:26px; animation-delay:.2s;} .wave span:nth-child(4){ height:14px; animation-delay:.3s;}
+.wave span:nth-child(5){ height:20px; animation-delay:.4s;} .wave span:nth-child(6){ height:10px; animation-delay:.5s;}
+@keyframes wave-bar{ 0%,100%{ transform:scaleY(.5);} 50%{ transform:scaleY(1);} }
+
+.parse-card{
+  margin-top:20px; background:var(--paper-2); border:1px solid var(--paper-line); border-radius:16px; padding:16px;
+  display:none;
+}
+.parse-card.show{ display:block; animation:screen-in .3s var(--ease); }
+.parse-native{ font-size:1rem; font-weight:600; margin-bottom:3px; }
+.parse-gloss{ font-size:.76rem; color:#8a7c53; font-style:italic; margin-bottom:14px; }
+.parse-field{ display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px dashed var(--paper-line); font-size:.82rem; }
+.parse-field:last-of-type{ border-bottom:none; }
+.parse-field span:first-child{ color:#8a7c53; }
+.parse-field span:last-child{ font-weight:700; }
+.parse-actions{ display:flex; gap:8px; margin-top:14px; }
+.mini-btn{ flex:1; padding:10px; border-radius:10px; border:none; font-weight:700; font-size:.8rem; cursor:pointer; transition:transform .15s var(--ease); }
+.mini-btn:active{ transform:scale(.96); }
+.mini-btn.confirm{ background:var(--leaf); color:#fff; }
+.mini-btn.cancel{ background:transparent; border:1px solid var(--paper-line); color:#6b5d38; }
+
+.recent-mini{ margin-top:22px; }
+
+/* --- khata screen --- */
+.khata-summary{ display:flex; gap:10px; margin-bottom:16px; }
+.khata-search{
+  display:flex; align-items:center; gap:8px; background:var(--paper-2); border:1px solid var(--paper-line);
+  border-radius:100px; padding:9px 14px; margin-bottom:14px; font-size:.82rem; color:#8a7c53;
+}
+.khata-search .icon{ width:15px; height:15px; }
+.cust-card{
+  display:flex; align-items:center; gap:11px; padding:12px 4px; border-bottom:1px solid var(--paper-line);
+  cursor:pointer; transition:background .2s;
+}
+.cust-card:hover{ background:rgba(0,0,0,.02); }
+.avatar{
+  width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-weight:700; color:#fff; font-size:.9rem; flex-shrink:0;
+}
+.cust-info{ flex:1; min-width:0; }
+.cust-info .n{ font-weight:700; font-size:.88rem; }
+.cust-info .l{ font-size:.72rem; color:#8a7c53; }
+.cust-owed{ text-align:right; }
+.cust-owed .amt{ font-weight:700; font-size:.88rem; }
+.cust-owed .amt.due{ color:var(--thread-deep); }
+.cust-owed .amt.clear{ color:var(--leaf-deep); }
+.cust-owed .tag{ font-size:.65rem; color:#8a7c53; }
+
+/* --- books screen --- */
+.chart-card{ background:var(--paper-2); border:1px solid var(--paper-line); border-radius:16px; padding:16px; margin-bottom:18px; }
+.chart-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.chart-head h5{ font-family:var(--font-display); font-size:.95rem; }
+.chart-head .tot{ font-size:.78rem; color:var(--leaf-deep); font-weight:700; }
+.bars{ display:flex; align-items:flex-end; gap:8px; height:100px; }
+.bar-col{ flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; }
+.bar{ width:100%; border-radius:6px 6px 3px 3px; background:linear-gradient(180deg,var(--saffron),var(--saffron-deep)); transform:scaleY(0); transform-origin:bottom; transition:transform .9s var(--ease); }
+.bar-col .m{ font-size:.62rem; color:#8a7c53; }
+
+.report-card{
+  background:var(--paper); border:1.5px dashed var(--paper-line); border-radius:14px; padding:16px; margin-bottom:16px;
+}
+.report-row{ display:flex; justify-content:space-between; font-size:.8rem; padding:6px 0; }
+.report-row span:last-child{ font-weight:700; }
+.report-title{ font-family:var(--font-display); font-weight:600; margin-bottom:8px; font-size:.95rem; }
+
+.season-grid{ display:grid; grid-template-columns:repeat(6,1fr); gap:6px; margin-top:8px; }
+.season-cell{ aspect-ratio:1; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:.62rem; font-weight:700; color:#3a2f16; cursor:default; position:relative; }
+.season-legend{ display:flex; align-items:center; gap:6px; font-size:.68rem; color:#8a7c53; margin-top:10px; }
+.season-legend .lg-bar{ flex:1; height:6px; border-radius:4px; background:linear-gradient(90deg,var(--leaf),var(--saffron),var(--thread)); }
+
+/* --- score screen --- */
+.gauge-wrap{ display:flex; flex-direction:column; align-items:center; padding:14px 0 6px; }
+.gauge-num{ font-family:var(--font-display); font-size:2.1rem; font-weight:600; margin-top:-72px; }
+.gauge-lbl{ font-size:.72rem; color:#8a7c53; margin-top:2px; margin-bottom:14px; }
+.check-item{ display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px dashed var(--paper-line); font-size:.82rem; }
+.check-item:last-child{ border-bottom:none; }
+.check-ic{ width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.check-ic.done{ background:rgba(62,139,99,.18); }
+.check-ic.done .icon{ stroke:var(--leaf-deep); width:12px; height:12px; }
+.check-ic.miss{ background:rgba(198,71,79,.15); }
+.check-ic.miss .icon{ stroke:var(--thread-deep); width:12px; height:12px; }
+.check-item .txt{ flex:1; }
+.check-item .txt .sub{ font-size:.68rem; color:#8a7c53; }
+.tip-card{ background:rgba(231,162,58,.14); border:1px solid rgba(231,162,58,.35); border-radius:12px; padding:12px 13px; margin-top:14px; font-size:.78rem; line-height:1.5; }
+.tip-card b{ color:var(--saffron-deep); }
+
+/* bottom nav */
+.phone-nav{
+  position:absolute; left:14px; right:14px; bottom:14px; background:rgba(243,233,210,.92); backdrop-filter:blur(6px);
+  border-radius:20px; display:flex; padding:8px 6px; box-shadow:0 -6px 20px rgba(0,0,0,.08); border:1px solid var(--paper-line);
+}
+.pn-btn{
+  flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; padding:8px 2px; border:none; background:none;
+  cursor:pointer; border-radius:12px; color:#9a8c63; transition:color .2s, background .2s;
+}
+.pn-btn .icon{ width:19px; height:19px; }
+.pn-btn span{ font-size:.6rem; font-weight:700; }
+.pn-btn.active{ color:var(--saffron-deep); background:rgba(231,162,58,.14); }
+
+@media (max-width:1020px){
+  .demo-shell{ grid-template-columns:1fr; }
+  .demo-copy{ position:static; }
+  .demo-steps{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+}
+@media (max-width:400px){
+  .phone{ width:100%; max-width:346px; }
+}
+
+/* ============================================================
+   PROCESS STRIP
+============================================================ */
+.process{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+.proc-card{ position:relative; padding:28px 24px 24px; background:var(--surface); border:1px solid var(--surface-line); border-radius:var(--radius-md); }
+.proc-num{ font-family:var(--font-display); font-size:.85rem; color:var(--saffron); margin-bottom:14px; }
+.proc-card h3{ font-size:1.06rem; margin-bottom:9px; }
+.proc-card p{ color:var(--ink-dim); font-size:.9rem; line-height:1.58; }
+@media (max-width:820px){ .process{ grid-template-columns:1fr; } }
+
+/* ============================================================
+   CTA / FOOTER
+============================================================ */
+.cta-band{
+  margin:0 auto; max-width:1180px; padding:64px 56px; border-radius:32px;
+  background:linear-gradient(150deg,#233457,#14213d); position:relative; overflow:hidden;
+  display:flex; justify-content:space-between; align-items:center; gap:30px; flex-wrap:wrap;
+}
+.cta-band::after{ content:""; position:absolute; right:-60px; bottom:-80px; width:260px; height:260px; border-radius:50%; background:rgba(231,162,58,.14); }
+.cta-band h2{ font-size:1.9rem; max-width:14ch; position:relative; }
+.cta-band p{ color:var(--ink-dim); margin-top:10px; max-width:36ch; position:relative; }
+.cta-band .actions{ position:relative; display:flex; gap:14px; flex-wrap:wrap; }
+
+footer{ padding:64px 0 40px; }
+.foot-grid{ display:flex; justify-content:space-between; gap:40px; flex-wrap:wrap; padding-bottom:36px; border-bottom:1px solid var(--surface-line); margin-bottom:26px; }
+.foot-brand p{ margin-top:12px; color:var(--ink-dim); font-size:.88rem; max-width:34ch; line-height:1.6; }
+.foot-cols{ display:flex; gap:56px; flex-wrap:wrap; }
+.foot-col h5{ font-size:.78rem; text-transform:uppercase; letter-spacing:.6px; color:var(--ink-dim); margin-bottom:14px; font-weight:700; }
+.foot-col a{ display:block; color:var(--ink); text-decoration:none; font-size:.88rem; margin-bottom:10px; opacity:.85; transition:opacity .2s; }
+.foot-col a:hover{ opacity:1; color:var(--saffron); }
+.foot-bottom{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; font-size:.78rem; color:var(--ink-dim); }
+
+/* ============================================================
+   TOAST + MODAL
+============================================================ */
+.toast-stack{ position:fixed; top:22px; left:50%; transform:translateX(-50%); z-index:400; display:flex; flex-direction:column; gap:10px; align-items:center; pointer-events:none; }
+.toast{
+  display:flex; align-items:center; gap:10px; background:var(--ink-strong); color:#1a1204; padding:12px 18px;
+  border-radius:100px; font-size:.85rem; font-weight:600; box-shadow:0 14px 30px -10px rgba(0,0,0,.4);
+  transform:translateY(-16px); opacity:0; transition:all .35s var(--ease);
+}
+.toast.show{ transform:translateY(0); opacity:1; }
+.toast .icon{ width:16px; height:16px; stroke:var(--leaf-deep); }
+
+.modal-overlay{
+  position:fixed; inset:0; background:rgba(8,13,24,.72); backdrop-filter:blur(4px); z-index:500;
+  display:flex; align-items:center; justify-content:center; padding:24px; opacity:0; pointer-events:none; transition:opacity .3s var(--ease);
+}
+.modal-overlay.open{ opacity:1; pointer-events:auto; }
+.modal{
+  background:var(--paper); color:var(--paper-ink); border-radius:24px; width:100%; max-width:420px;
+  padding:28px 26px; position:relative; box-shadow:var(--shadow-deep); transform:translateY(18px) scale(.97); transition:transform .35s var(--ease);
+  max-height:86vh; overflow-y:auto;
+}
+.modal-overlay.open .modal{ transform:translateY(0) scale(1); }
+.modal-close{ position:absolute; top:16px; right:16px; background:var(--paper-2); border:none; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.modal-close .icon{ width:14px; height:14px; }
+.modal h3{ font-size:1.25rem; margin-bottom:6px; color:var(--paper-ink); }
+.modal .lead{ font-size:.86rem; color:#7a6c47; margin-bottom:20px; line-height:1.5; }
+
+.step-track{ display:flex; gap:6px; margin-bottom:22px; }
+.step-track .seg{ flex:1; height:4px; border-radius:3px; background:var(--paper-line); }
+.step-track .seg.done{ background:var(--saffron); }
+
+.role-opt{ display:flex; align-items:center; gap:12px; padding:14px; border:1.5px solid var(--paper-line); border-radius:14px; margin-bottom:10px; cursor:pointer; transition:all .2s var(--ease); }
+.role-opt:hover{ border-color:var(--saffron); }
+.role-opt.selected{ border-color:var(--saffron); background:rgba(231,162,58,.1); }
+.role-opt .icon-circ{ width:38px; height:38px; border-radius:50%; background:var(--paper-2); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.role-opt .icon-circ .icon{ width:17px; height:17px; }
+.role-opt .rt{ font-weight:700; font-size:.88rem; }
+.role-opt .rs{ font-size:.74rem; color:#8a7c53; }
+
+.perm-row{ display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-bottom:1px dashed var(--paper-line); }
+.perm-row:last-child{ border-bottom:none; }
+.perm-row .pt{ font-size:.86rem; font-weight:600; }
+.perm-row .ps{ font-size:.72rem; color:#8a7c53; }
+.switch{ width:42px; height:24px; border-radius:100px; background:var(--paper-line); position:relative; cursor:pointer; border:none; flex-shrink:0; transition:background .2s; }
+.switch.on{ background:var(--leaf); }
+.switch::after{ content:""; position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:#fff; transition:transform .2s var(--ease); }
+.switch.on::after{ transform:translateX(18px); }
+.switch.locked{ background:#e6dcc0; cursor:not-allowed; }
+.switch.locked::after{ background:#f6efdb; }
+
+.modal-actions{ display:flex; gap:10px; margin-top:22px; }
+.pin-box{ display:flex; gap:10px; justify-content:center; margin:20px 0; }
+.pin-box .d{ width:44px; height:52px; border-radius:12px; background:var(--paper-2); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:1.3rem; font-weight:700; border:1px solid var(--paper-line); }
+
+/* report modal */
+.doc-preview{ background:#fff; border-radius:12px; padding:18px; border:1px solid var(--paper-line); font-size:.8rem; }
+.doc-preview h4{ font-family:var(--font-display); font-size:1rem; margin-bottom:4px; }
+.doc-preview .meta{ color:#8a7c53; font-size:.72rem; margin-bottom:14px; }
+.doc-preview .row{ display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #eee; }
+.doc-preview .row.tot{ border-bottom:none; font-weight:800; padding-top:10px; }
+
+@media (max-width: 720px){
+  .section{ padding:72px 0; }
+  .hero{ padding:56px 0 60px; }
+  .cta-band{ padding:44px 26px; }
+  .stat-strip .wrap{ padding:28px 20px; }
+  .wrap{ padding:0 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+<!-- ============================================================
+     NAV
+============================================================ -->
+<nav class="nav">
+  <div class="wrap">
+    <a href="#" class="brand">
+      <span class="brand-mark"><svg class="icon" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21z"/><path d="M4 5.5v15.5"/></svg></span>
+      KhataSaathi
+    </a>
+    <ul class="nav-links">
+      <li><a href="#problem">The problem</a></li>
+      <li><a href="#features">Toolkit</a></li>
+      <li><a href="#demo">Live demo</a></li>
+      <li><a href="#how">How it works</a></li>
+    </ul>
+    <a href="#demo" class="nav-cta">
+      Try the demo
+      <svg class="icon" viewBox="0 0 24 24" style="width:15px;height:15px;stroke:#1a1204"><path d="M9 6l6 6-6 6"/></svg>
+    </a>
+    <button class="nav-toggle" aria-label="Menu" onclick="document.querySelector('.nav-links').style.display='flex'">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="hero-eyebrow-row">
+        <span class="pill"><span class="dot"></span> PS #6 · MUJ HackX 4.0 · Fintech</span>
+      </div>
+      <h1>The shop ledger your <em>grandmother</em> trusts, rebuilt to talk to lenders.</h1>
+      <p class="hero-sub">KhataSaathi turns a spoken sentence in your own language into a clean bookkeeping entry — then quietly assembles the credit history that gets a small shop its first loan. No English, no desktop, no accountant required.</p>
+      <div class="hero-actions">
+        <a href="#demo" class="btn btn-primary">
+          <svg class="icon" viewBox="0 0 24 24" style="stroke:#1a1204;width:17px;height:17px"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v4"/><path d="M8 22h8"/></svg>
+          Try the live demo
+        </a>
+        <a href="#problem" class="btn btn-ghost">Read the problem</a>
+      </div>
+      <div class="hero-proof">
+        <div class="proof-item"><span class="proof-num">6</span><span class="proof-label">core modules, one toolkit for the whole shop</span></div>
+        <div class="proof-item"><span class="proof-num">5+</span><span class="proof-label">Indian languages for voice entry</span></div>
+        <div class="proof-item"><span class="proof-num">0</span><span class="proof-label">internet connection required to record a sale</span></div>
+      </div>
+    </div>
+    <div class="hero-mock">
+      <div class="mock-card">
+        <div class="mock-row-head"><span>Aaj ka Khata</span><span class="mock-badge">Synced</span></div>
+        <div class="mock-line sale"><span>Ramesh Kumar · Sugar 2kg</span><b>+₹90</b></div>
+        <div class="mock-line credit"><span>Iqbal Traders · Udhaar</span><b>−₹1,200</b></div>
+        <div class="mock-line sale"><span>Walk-in · Rice 5kg</span><b>+₹310</b></div>
+        <div class="mock-line" style="border-bottom:none;"><span style="font-weight:700;">Today's profit</span><b style="color:#2c6b4a;">₹3,080</b></div>
+        <div class="mock-mic"><svg class="icon" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v4"/><path d="M8 22h8"/></svg></div>
+      </div>
+      <div class="float-card f1">
+        <span class="icon-wrap"><svg class="icon" viewBox="0 0 24 24"><path d="m9 12 2 2 4-4"/><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></svg></span>
+        <span>Credit score<br><b>64 / 100</b></span>
+      </div>
+      <div class="float-card f2">
+        <span class="icon-wrap"><svg class="icon" viewBox="0 0 24 24"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg></span>
+        <span>Reminder sent<br><b>Hindi · WhatsApp</b></span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================================
+     STAT STRIP
+============================================================ -->
+<section class="stat-strip">
+  <div class="wrap">
+    <div class="stat"><div class="stat-num" data-count="63" data-suffix="M+">0</div><div class="stat-cap">informal micro-enterprises in India run on memory and paper*</div></div>
+    <div class="stat"><div class="stat-num" data-count="87" data-suffix="%">0</div><div class="stat-cap">of small merchants have no formal record a lender can read*</div></div>
+    <div class="stat"><div class="stat-num" data-count="40" data-suffix="%">0</div><div class="stat-cap">of daily sales lost to untracked udhaar given to regulars*</div></div>
+    <div class="stat"><div class="stat-num" data-count="5" data-suffix=" min">0</div><div class="stat-cap">to set up an account — voice-guided, no typing needed</div></div>
+  </div>
+</section>
+<p style="text-align:center;font-size:.72rem;color:var(--ink-dim);opacity:.6;padding-top:10px;">*Illustrative figures for pitch context, not verified statistics.</p>
+
+<!-- ============================================================
+     PROBLEM
+============================================================ -->
+<section class="section" id="problem">
+  <div class="wrap">
+    <div class="problem">
+      <div class="problem-copy">
+        <div class="section-tag">Why this matters</div>
+        <h2 style="margin-top:10px;margin-bottom:22px;font-size:clamp(1.8rem,2.8vw,2.3rem);">A shop that runs perfectly still looks invisible to a bank.</h2>
+        <p>Small merchants and informal businesses run their whole operation from memory, a paper notebook, and a phone. Credit handed to regular customers goes untracked, so money quietly leaks out of the till every week.</p>
+        <p>When the same merchant applies for a loan, there's <strong>no income to show</strong> — because most business software assumes a desktop and comfortable English, neither of which describes the counter of a neighbourhood store.</p>
+        <p>KhataSaathi is built the other way round: <strong>mobile-first, voice-first, and vernacular by default</strong> — a toolkit for the merchant's whole financial life, not just one narrow task.</p>
+      </div>
+      <div class="ledger-illus">
+        <h4>What a lender sees today</h4>
+        <div class="receipt-line miss"><span>Formal income proof</span><span>Missing</span></div>
+        <div class="receipt-line miss"><span>Digitised transaction history</span><span>Missing</span></div>
+        <div class="receipt-line miss"><span>Udhaar / credit given out</span><span>Untracked</span></div>
+        <div class="receipt-line"><span>Actual monthly cash handled</span><span>₹80,000+</span></div>
+        <div class="receipt-line total"><span>Loan outcome</span><span style="color:#9e343b;">Declined</span></div>
+        <div class="torn"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="thread"><span></span></div></div>
+
+<!-- ============================================================
+     FEATURES
+============================================================ -->
+<section class="section" id="features">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-tag">The toolkit</div>
+      <h2 style="margin-top:10px;">Six modules. One merchant. Zero accounting background required.</h2>
+      <p>Every feature answers the challenge directly — a mobile-first, vernacular toolkit that makes payments, bookkeeping, credit access and basic planning practical at the counter of a small shop.</p>
+    </div>
+    <div class="features">
+      <div class="f-card">
+        <div class="f-icon" style="background:rgba(231,162,58,.16);"><svg class="icon" viewBox="0 0 24 24" style="stroke:var(--saffron)"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v4"/><path d="M8 22h8"/></svg></div>
+        <h3>Voice &amp; vernacular entry</h3>
+        <p>Record a sale, an expense or a credit note by speaking in a local language. KhataSaathi reads it back for confirmation in the same language before it ever touches the books.</p>
+      </div>
+      <div class="f-card">
+        <div class="f-icon" style="background:rgba(198,71,79,.14);"><svg class="icon" viewBox="0 0 24 24" style="stroke:var(--thread)"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17" cy="9" r="3"/><path d="M15 14.2c2.9.4 5 2.6 5 5.8"/></svg></div>
+        <h3>Khata digitisation</h3>
+        <p>Track exactly who owes what. Send a polite, native-language reminder in one tap and record part-payments as they trickle in.</p>
+      </div>
+      <div class="f-card">
+        <div class="f-icon" style="background:rgba(62,139,99,.16);"><svg class="icon" viewBox="0 0 24 24" style="stroke:var(--leaf)"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></div>
+        <h3>Automatic books</h3>
+        <p>Every voice entry rolls up into a simple daily profit view and a monthly summary — a document a lender can actually read, no accountant needed.</p>
+      </div>
+      <div class="f-card">
+        <div class="f-icon" style="background:rgba(231,162,58,.16);"><svg class="icon" viewBox="0 0 24 24" style="stroke:var(--saffron)"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="m9 12 2 2 4-4"/></svg></div>
+        <h3>Credit readiness</h3>
+        <p>A live score shows the merchant exactly what a lender would see today, and precisely what's missing from the file to improve it.</p>
+      </div>
+      <div class="f-card">
+        <div class="f-icon" style="background:rgba(198,71,79,.14);"><svg class="icon" viewBox="0 0 24 24" style="stroke:var(--thread)"><path d="M2 8.82a15 15 0 0 1 20 0"/><path d="M5 12.86a10 10 0 0 1 14 0"/><path d="M8.5 16.43a5 5 0 0 1 7 0"/><path d="M12 20h.01"/><path d="M2 2l20 20"/></svg></div>
+        <h3>Low-bandwidth design</h3>
+        <p>Works fully offline on an entry-level phone. Entries queue locally and sync the moment a signal returns — nothing is ever lost.</p>
+      </div>
+      <div class="f-card">
+        <div class="f-icon" style="background:rgba(62,139,99,.16);"><svg class="icon" viewBox="0 0 24 24" style="stroke:var(--leaf)"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V8a5 5 0 0 1 10 0v3"/></svg></div>
+        <h3>Assisted onboarding</h3>
+        <p>A family member or shop assistant can set the account up together — with sensitive controls like withdrawals kept locked to the owner.</p>
+      </div>
+      <div class="f-card bonus">
+        <div class="f-icon" style="background:rgba(231,162,58,.22);width:56px;height:56px;"><svg class="icon" viewBox="0 0 24 24" style="stroke:var(--saffron);width:26px;height:26px;"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg></div>
+        <div class="bonus-copy">
+          <h3>Cash-flow seasonality <small>Bonus creativity</small></h3>
+          <p>A simple week-by-week view tells the merchant which weeks of the year their cash historically runs tight — so restocking and repayments can be timed around it, not against it.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="thread"><span></span></div></div>
+
+<!-- ============================================================
+     LIVE DEMO
+============================================================ -->
+<section class="section demo" id="demo">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-tag">See it work</div>
+      <h2 style="margin-top:10px;">A working prototype, not a mockup.</h2>
+      <p>Tap through the phone on the right — pick a language, speak a sale, chase an udhaar, and watch the credit score respond. Everything here runs live in this page.</p>
+    </div>
+
+    <div class="demo-shell">
+      <div class="demo-copy">
+        <div class="demo-steps" id="demoSteps">
+          <div class="demo-step active" data-tab="home">
+            <div class="num">1</div>
+            <div><h4>Today, at a glance</h4><p>Sales, expenses and profit the moment they happen — plus a heads-up before a lean week hits.</p></div>
+          </div>
+          <div class="demo-step" data-tab="voice">
+            <div class="num">2</div>
+            <div><h4>Speak a transaction</h4><p>Pick a language, tap the mic, and watch a spoken sentence become a structured ledger entry.</p></div>
+          </div>
+          <div class="demo-step" data-tab="khata">
+            <div class="num">3</div>
+            <div><h4>Chase the udhaar</h4><p>See who owes what and send a native-language reminder without leaving the app.</p></div>
+          </div>
+          <div class="demo-step" data-tab="books">
+            <div class="num">4</div>
+            <div><h4>Books &amp; seasonality</h4><p>A lender-ready monthly summary, plus the weeks of the year cash historically runs tight.</p></div>
+          </div>
+          <div class="demo-step" data-tab="score">
+            <div class="num">5</div>
+            <div><h4>Credit readiness</h4><p>Exactly what a lender would see today, and the fastest way to improve it.</p></div>
+          </div>
+        </div>
+        <div style="margin-top:28px;display:flex;gap:10px;">
+          <button class="btn btn-ghost" style="padding:11px 20px;font-size:.85rem;" onclick="openOnboard()">
+            <svg class="icon" viewBox="0 0 24 24" style="width:15px;height:15px;"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V8a5 5 0 0 1 10 0v3"/></svg>
+            Add a shop helper
+          </button>
+        </div>
+      </div>
+
+      <div class="phone-stage">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-topbar">
+              <div class="phone-brand"><span class="dot-mark"></span> KhataSaathi</div>
+              <div class="phone-actions">
+                <button class="chip-btn" id="offlineBtn" onclick="toggleOffline()" aria-label="Toggle offline mode">
+                  <svg class="icon" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg>
+                </button>
+                <button class="chip-btn" onclick="openOnboard()" aria-label="Shop team settings">
+                  <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17" cy="9" r="3"/><path d="M15 14.2c2.9.4 5 2.6 5 5.8"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="phone-body">
+
+              <!-- HOME -->
+              <div class="screen active" data-screen="home">
+                <div class="greet"><div class="hi">Namaste,</div><div class="name">Meena Stores</div></div>
+
+                <div class="summary-card">
+                  <div class="summary-top">
+                    <div><div class="summary-label">Today's profit</div><div class="summary-amt" id="homeProfit">₹3,080</div></div>
+                    <span class="trend-pill">▲ 12% vs yesterday</span>
+                  </div>
+                  <div class="summary-split">
+                    <div class="split-item sale"><div class="lbl">Sales</div><div class="val" id="homeSales">₹4,260</div></div>
+                    <div class="split-item exp"><div class="lbl">Expenses</div><div class="val" id="homeExpenses">₹1,180</div></div>
+                  </div>
+                </div>
+
+                <div class="quick-actions">
+                  <button class="qa-btn" onclick="goTab('voice')"><span class="icon-circ" style="background:rgba(231,162,58,.18);"><svg class="icon" viewBox="0 0 24 24" style="stroke:var(--saffron-deep)"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/></svg></span>Speak entry</button>
+                  <button class="qa-btn" onclick="goTab('khata')"><span class="icon-circ" style="background:rgba(198,71,79,.14);"><svg class="icon" viewBox="0 0 24 24" style="stroke:var(--thread-deep)"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/></svg></span>Udhaar</button>
+                  <button class="qa-btn" onclick="goTab('books')"><span class="icon-circ" style="background:rgba(62,139,99,.16);"><svg class="icon" viewBox="0 0 24 24" style="stroke:var(--leaf-deep)"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span>Books</button>
+                </div>
+
+                <div class="alert-banner">
+                  <svg class="icon" viewBox="0 0 24 24"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.86 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L14.7 3.86a2 2 0 0 0-3.4 0z"/></svg>
+                  <span><b>Heads up:</b> cash historically runs tight in the next 2 weeks. Consider chasing older udhaar now.</span>
+                </div>
+
+                <div class="section-label">Recent activity</div>
+                <div id="homeRecent"></div>
+              </div>
+
+              <!-- VOICE -->
+              <div class="screen" data-screen="voice">
+                <div class="section-label" style="margin-top:6px;">Speak in your language</div>
+                <div class="lang-row" id="langRow"></div>
+
+                <div class="mic-stage">
+                  <button class="mic-big" id="micBtn" onclick="startListening()" aria-label="Tap to speak a transaction">
+                    <svg class="icon" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v4"/><path d="M8 22h8"/></svg>
+                  </button>
+                  <div class="mic-status" id="micStatus">Tap the mic and say a sale, expense or udhaar</div>
+                  <div class="wave" id="wave"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+                </div>
+
+                <div class="parse-card" id="parseCard">
+                  <div class="parse-native" id="parseNative"></div>
+                  <div class="parse-gloss" id="parseGloss"></div>
+                  <div class="parse-field"><span>Customer</span><span id="pfCustomer">Ramesh Kumar</span></div>
+                  <div class="parse-field"><span>Item</span><span id="pfItem">Sugar · 2kg</span></div>
+                  <div class="parse-field"><span>Amount</span><span id="pfAmount">₹90</span></div>
+                  <div class="parse-field"><span>Type</span><span id="pfType">Cash sale</span></div>
+                  <div class="parse-actions">
+                    <button class="mini-btn cancel" onclick="cancelParse()">Discard</button>
+                    <button class="mini-btn confirm" onclick="confirmParse()">Add to khata</button>
+                  </div>
+                </div>
+
+                <div class="recent-mini">
+                  <div class="section-label">Logged just now</div>
+                  <div id="voiceRecent" style="font-size:.78rem;color:#8a7c53;">Nothing yet — try the mic above.</div>
+                </div>
+              </div>
+
+              <!-- KHATA -->
+              <div class="screen" data-screen="khata">
+                <div class="section-label" style="margin-top:6px;">Udhaar overview</div>
+                <div class="khata-summary">
+                  <div class="split-item exp" style="background:var(--paper-2);border:1px solid var(--paper-line);flex:1;"><div class="lbl">Total outstanding</div><div class="val" style="color:var(--thread-deep);" id="khataTotal">₹5,250</div></div>
+                  <div class="split-item sale" style="background:var(--paper-2);border:1px solid var(--paper-line);flex:1;"><div class="lbl">Customers tracked</div><div class="val" style="color:var(--paper-ink);" id="khataCount">4</div></div>
+                </div>
+                <div class="khata-search"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg> Search customers…</div>
+                <div id="custList"></div>
+              </div>
+
+              <!-- BOOKS -->
+              <div class="screen" data-screen="books">
+                <div class="section-label" style="margin-top:6px;">Last 6 months</div>
+                <div class="chart-card">
+                  <div class="chart-head"><h5>Monthly profit</h5><span class="tot">▲ steady growth</span></div>
+                  <div class="bars" id="barsChart"></div>
+                </div>
+
+                <div class="section-label">Lender-ready summary</div>
+                <div class="report-card">
+                  <div class="report-title">Meena Stores — Monthly Statement</div>
+                  <div class="report-row"><span>Avg. monthly sales</span><span>₹1,18,400</span></div>
+                  <div class="report-row"><span>Avg. monthly expenses</span><span>₹41,900</span></div>
+                  <div class="report-row"><span>Avg. net profit</span><span>₹76,500</span></div>
+                  <div class="report-row"><span>Months of history</span><span>6</span></div>
+                  <button class="mini-btn confirm" style="width:100%;margin-top:12px;" onclick="openReport()">Generate lender report</button>
+                </div>
+
+                <div class="section-label">Cash-flow seasonality <span style="color:#b58a2b;">· bonus</span></div>
+                <div class="chart-card">
+                  <div class="season-grid" id="seasonGrid"></div>
+                  <div class="season-legend"><span>Comfortable</span><span class="lg-bar"></span><span>Tight</span></div>
+                  <p style="font-size:.72rem;color:#8a7c53;margin-top:10px;line-height:1.5;">Based on your own history — cash tends to run tightest in <b style="color:#9e343b;">late June and July</b>.</p>
+                </div>
+              </div>
+
+              <!-- SCORE -->
+              <div class="screen" data-screen="score">
+                <div class="section-label" style="margin-top:6px;">Credit readiness</div>
+                <div class="gauge-wrap">
+                  <svg width="180" height="110" viewBox="0 0 180 110">
+                    <path d="M14 100 A76 76 0 0 1 166 100" fill="none" stroke="#E6D8B2" stroke-width="14" stroke-linecap="round"/>
+                    <path id="gaugeArc" d="M14 100 A76 76 0 0 1 166 100" fill="none" stroke="var(--saffron)" stroke-width="14" stroke-linecap="round" stroke-dasharray="239" stroke-dashoffset="239"/>
+                  </svg>
+                  <div class="gauge-num">64<span style="font-size:1rem;color:#8a7c53;">/100</span></div>
+                  <div class="gauge-lbl">What a lender would see today</div>
+                </div>
+
+                <div class="check-item"><span class="check-ic done"><svg class="icon" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><div class="txt"><div>Shop KYC verified</div><div class="sub">Aadhaar-linked, complete</div></div></div>
+                <div class="check-item"><span class="check-ic done"><svg class="icon" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><div class="txt"><div>3 months of digital sales history</div><div class="sub">Built automatically from voice entries</div></div></div>
+                <div class="check-item"><span class="check-ic miss"><svg class="icon" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></span><div class="txt"><div>Bank statement linked</div><div class="sub">Missing — biggest gap right now</div></div></div>
+                <div class="check-item"><span class="check-ic miss"><svg class="icon" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></span><div class="txt"><div>GST registration</div><div class="sub">Optional, not linked</div></div></div>
+                <div class="check-item"><span class="check-ic done"><svg class="icon" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><div class="txt"><div>Consistent monthly profit trend</div><div class="sub">6 months, no missing entries</div></div></div>
+
+                <div class="tip-card"><b>Fastest fix:</b> link one bank statement to move from 64 to an estimated 82 — enough to clear most microfinance thresholds.</div>
+              </div>
+
+            </div>
+
+            <div class="phone-nav">
+              <button class="pn-btn active" data-tab="home" onclick="goTab('home')"><svg class="icon" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></button>
+              <button class="pn-btn" data-tab="voice" onclick="goTab('voice')"><svg class="icon" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/></svg><span>Speak</span></button>
+              <button class="pn-btn" data-tab="khata" onclick="goTab('khata')"><svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/></svg><span>Khata</span></button>
+              <button class="pn-btn" data-tab="books" onclick="goTab('books')"><svg class="icon" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21z"/><path d="M4 5.5v15.5"/></svg><span>Books</span></button>
+              <button class="pn-btn" data-tab="score" onclick="goTab('score')"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="m9 12 2 2 4-4"/></svg><span>Score</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="thread"><span></span></div></div>
+
+<!-- ============================================================
+     HOW IT WORKS
+============================================================ -->
+<section class="section" id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-tag">Under the hood</div>
+      <h2 style="margin-top:10px;">From a spoken sentence to a lender-ready file.</h2>
+      <p>Three quiet steps run behind every screen you just tried.</p>
+    </div>
+    <div class="process">
+      <div class="proc-card">
+        <div class="proc-num">01 — Capture</div>
+        <h3>Listen, in the merchant's own words</h3>
+        <p>On-device speech capture works offline, in the shop's chosen language, and queues the raw entry the instant it's spoken — no signal required.</p>
+      </div>
+      <div class="proc-card">
+        <div class="proc-num">02 — Understand</div>
+        <h3>Turn speech into structure</h3>
+        <p>Each entry is parsed into customer, item, amount and type, shown back in plain language for a one-tap confirmation before anything is saved.</p>
+      </div>
+      <div class="proc-card">
+        <div class="proc-num">03 — Act</div>
+        <h3>Compound it into leverage</h3>
+        <p>Confirmed entries roll into books, a credit score, reminders and a seasonality view — the everyday record becomes the paperwork a lender trusts.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     CTA
+============================================================ -->
+<section class="section" style="padding-top:0;">
+  <div class="cta-band">
+    <div>
+      <h2>Built for the counter, not the boardroom.</h2>
+      <p>A working prototype for MUJ HackX 4.0 — Problem Statement 6, Fintech track.</p>
+    </div>
+    <div class="actions">
+      <a href="#demo" class="btn btn-primary">Explore the demo</a>
+      <a href="#problem" class="btn btn-ghost" style="border-color:rgba(255,255,255,.2);">Read the brief</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a href="#" class="brand"><span class="brand-mark"><svg class="icon" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21z"/><path d="M4 5.5v15.5"/></svg></span>KhataSaathi</a>
+        <p>A mobile-first, vernacular financial toolkit for India's micro merchants — payments, bookkeeping, credit access and planning, built for a shop counter, not a desktop.</p>
+      </div>
+      <div class="foot-cols">
+        <div class="foot-col">
+          <h5>Product</h5>
+          <a href="#features">Toolkit</a>
+          <a href="#demo">Live demo</a>
+          <a href="#how">How it works</a>
+        </div>
+        <div class="foot-col">
+          <h5>Hackathon</h5>
+          <a href="#problem">Problem Statement 6</a>
+          <a href="#">MUJ HackX 4.0</a>
+          <a href="#">Theme: Fintech</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 KhataSaathi — concept prototype for MUJ HackX 4.0.</span>
+      <span>Built for merchants who never had time to learn software.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================
+     ONBOARDING MODAL
+============================================================ -->
+<div class="modal-overlay" id="onboardOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="onboardTitle">
+    <button class="modal-close" onclick="closeModal('onboardOverlay')" aria-label="Close"><svg class="icon" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <div class="step-track" id="onbTrack"><div class="seg done"></div><div class="seg"></div><div class="seg"></div></div>
+
+    <div id="onbStep1">
+      <h3 id="onboardTitle">Add a shop helper</h3>
+      <p class="lead">Let a family member or assistant help run the counter — without touching money or settings.</p>
+      <div class="role-opt selected" onclick="selectRole(this)">
+        <span class="icon-circ"><svg class="icon" viewBox="0 0 24 24"><path d="M4 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="10" cy="7" r="4"/></svg></span>
+        <div><div class="rt">Family member</div><div class="rs">Can log sales, view khata and books</div></div>
+      </div>
+      <div class="role-opt" onclick="selectRole(this)">
+        <span class="icon-circ"><svg class="icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M4 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="10" cy="7" r="4"/></svg></span>
+        <div><div class="rt">Shop assistant</div><div class="rs">Can log sales and send reminders only</div></div>
+      </div>
+      <div class="modal-actions"><button class="mini-btn confirm" style="width:100%;" onclick="onbNext(2)">Continue</button></div>
+    </div>
+
+    <div id="onbStep2" style="display:none;">
+      <h3>Set their permissions</h3>
+      <p class="lead">Owner-only controls stay locked, whatever role you picked.</p>
+      <div class="perm-row"><div><div class="pt">Record sales &amp; expenses</div><div class="ps">Voice or manual entry</div></div><button class="switch on" onclick="this.classList.toggle('on')"></button></div>
+      <div class="perm-row"><div><div class="pt">Send udhaar reminders</div><div class="ps">WhatsApp / SMS, native language</div></div><button class="switch on" onclick="this.classList.toggle('on')"></button></div>
+      <div class="perm-row"><div><div class="pt">View monthly books</div><div class="ps">Read-only summary</div></div><button class="switch on" onclick="this.classList.toggle('on')"></button></div>
+      <div class="perm-row"><div><div class="pt">Withdraw or edit prices</div><div class="ps">Owner only — cannot be enabled</div></div><button class="switch locked"></button></div>
+      <div class="modal-actions"><button class="mini-btn cancel" onclick="onbNext(1)">Back</button><button class="mini-btn confirm" onclick="onbNext(3)">Continue</button></div>
+    </div>
+
+    <div id="onbStep3" style="display:none;">
+      <h3>Helper PIN created</h3>
+      <p class="lead">Share this 4-digit PIN — it signs into a limited view only, on any phone.</p>
+      <div class="pin-box"><div class="d">4</div><div class="d">1</div><div class="d">9</div><div class="d">2</div></div>
+      <div class="modal-actions"><button class="mini-btn confirm" style="width:100%;" onclick="finishOnboard()">Done</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     REPORT MODAL
+============================================================ -->
+<div class="modal-overlay" id="reportOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="reportTitle">
+    <button class="modal-close" onclick="closeModal('reportOverlay')" aria-label="Close"><svg class="icon" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <h3 id="reportTitle">Lender-ready report</h3>
+    <p class="lead">A single page, plain-language summary — built automatically from six months of voice entries.</p>
+    <div class="doc-preview">
+      <h4>Meena Stores</h4>
+      <div class="meta">Statement period: Apr – Sep 2026 · Generated by KhataSaathi</div>
+      <div class="row"><span>Average monthly sales</span><span>₹1,18,400</span></div>
+      <div class="row"><span>Average monthly expenses</span><span>₹41,900</span></div>
+      <div class="row"><span>Outstanding udhaar (current)</span><span>₹5,250</span></div>
+      <div class="row"><span>Months of continuous history</span><span>6</span></div>
+      <div class="row tot"><span>Average net profit</span><span>₹76,500</span></div>
+    </div>
+    <div class="modal-actions">
+      <button class="mini-btn cancel" onclick="closeModal('reportOverlay')">Close</button>
+      <button class="mini-btn confirm" onclick="downloadReport()">Download .txt</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   TOAST
+============================================================ */
+function toast(msg, icon){
+  const stack = document.getElementById('toastStack');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = (icon || '<svg class="icon" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg>') + '<span>'+msg+'</span>';
+  stack.appendChild(el);
+  requestAnimationFrame(()=> el.classList.add('show'));
+  setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=> el.remove(), 350); }, 3200);
+}
+
+/* ============================================================
+   COUNT-UP STATS
+============================================================ */
+const statEls = document.querySelectorAll('.stat-num');
+const statObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const el = entry.target;
+      const target = parseInt(el.dataset.count,10);
+      const suffix = el.dataset.suffix || '';
+      let cur = 0;
+      const step = Math.max(1, Math.round(target/40));
+      const iv = setInterval(()=>{
+        cur += step;
+        if(cur >= target){ cur = target; clearInterval(iv); }
+        el.textContent = cur + suffix;
+      }, 28);
+      statObserver.unobserve(el);
+    }
+  });
+}, {threshold:.5});
+statEls.forEach(el=> statObserver.observe(el));
+
+/* ============================================================
+   DEMO STATE
+============================================================ */
+const customers = [
+  {name:'Ramesh Kumar', owed:1450, last:'3 days ago', color:'#C6474F'},
+  {name:'Sunita Devi', owed:0, last:'today', color:'#3E8B63'},
+  {name:'Iqbal Traders', owed:3200, last:'12 days ago', color:'#C77F1E'},
+  {name:'Meena Auto Parts', owed:600, last:'1 day ago', color:'#4C6FA5'},
+];
+
+const monthly = [
+  {m:'Apr', v:62000},{m:'May', v:71000},{m:'Jun', v:48000},
+  {m:'Jul', v:44000},{m:'Aug', v:69000},{m:'Sep', v:81000}
+];
+
+const seasonMonths = [
+  {m:'Jan', t:.30},{m:'Feb', t:.24},{m:'Mar', t:.34},{m:'Apr', t:.20},
+  {m:'May', t:.22},{m:'Jun', t:.72},{m:'Jul', t:.80},{m:'Aug', t:.52},
+  {m:'Sep', t:.28},{m:'Oct', t:.18},{m:'Nov', t:.16},{m:'Dec', t:.38}
+];
+
+const langs = [
+  {code:'hi', label:'हिंदी'},
+  {code:'en', label:'English'},
+  {code:'bn', label:'বাংলা'},
+  {code:'ta', label:'தமிழ்'},
+  {code:'mr', label:'मराठी'}
+];
+
+const voicePhrases = {
+  hi: {native:'रमेश को दो किलो चीनी, नब्बे रुपये', gloss:'"Sold Ramesh 2kg sugar for ₹90"'},
+  en: {native:'Sold two kilo sugar to Ramesh, ninety rupees', gloss:'Recognised directly in English'},
+  bn: {native:'রমেশকে দুই কেজি চিনি, নব্বই টাকা', gloss:'"Sold Ramesh 2kg sugar for ₹90"'},
+  ta: {native:'ரமேஷுக்கு இரண்டு கிலோ சர்க்கரை, தொண்ணூறு ரூபாய்', gloss:'"Sold Ramesh 2kg sugar for ₹90"'},
+  mr: {native:'रमेशला दोन किलो साखर, नव्वद रुपये', gloss:'"Sold Ramesh 2kg sugar for ₹90"'}
+};
+
+let selectedLang = 'hi';
+let homeStats = {sales:4260, expenses:1180};
+let voiceLogCount = 0;
+
+/* ------------ render langs ------------ */
+const langRow = document.getElementById('langRow');
+langs.forEach(l=>{
+  const b = document.createElement('button');
+  b.className = 'lang-chip' + (l.code===selectedLang ? ' active':'');
+  b.textContent = l.label;
+  b.dataset.code = l.code;
+  b.onclick = ()=>{
+    document.querySelectorAll('.lang-chip').forEach(c=>c.classList.remove('active'));
+    b.classList.add('active');
+    selectedLang = l.code;
+  };
+  langRow.appendChild(b);
+});
+
+/* ------------ render customers ------------ */
+function initials(name){ return name.split(' ').map(w=>w[0]).slice(0,2).join(''); }
+function renderCustomers(){
+  const list = document.getElementById('custList');
+  list.innerHTML = '';
+  let total = 0;
+  customers.forEach(c=>{
+    total += c.owed;
+    const row = document.createElement('div');
+    row.className = 'cust-card';
+    row.innerHTML = `
+      <div class="avatar" style="background:${c.color}">${initials(c.name)}</div>
+      <div class="cust-info"><div class="n">${c.name}</div><div class="l">Last activity: ${c.last}</div></div>
+      <div class="cust-owed">
+        <div class="amt ${c.owed>0?'due':'clear'}">${c.owed>0 ? '₹'+c.owed.toLocaleString('en-IN') : 'Cleared'}</div>
+        ${c.owed>0 ? '<div class="tag">tap to remind</div>' : '<div class="tag">no dues</div>'}
+      </div>`;
+    if(c.owed>0){
+      row.onclick = ()=> sendReminder(c);
+    }
+    list.appendChild(row);
+  });
+  document.getElementById('khataTotal').textContent = '₹' + total.toLocaleString('en-IN');
+  document.getElementById('khataCount').textContent = customers.length;
+}
+renderCustomers();
+
+function sendReminder(c){
+  const langLabel = langs.find(l=>l.code===selectedLang)?.label || 'Hindi';
+  toast(`Reminder sent to ${c.name.split(' ')[0]} in ${langLabel} via WhatsApp`,
+    '<svg class="icon" viewBox="0 0 24 24"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg>');
+}
+
+/* ------------ home recent ------------ */
+const recentTx = [
+  {t:'Ramesh Kumar · Sugar 2kg', sub:'Cash sale · just now', amt:'+₹90', pos:true, icon:'sale'},
+  {t:'Iqbal Traders · Udhaar given', sub:'Credit · 2 hrs ago', amt:'−₹1,200', pos:false, icon:'credit'},
+  {t:'Wholesale rice restock', sub:'Expense · this morning', amt:'−₹850', pos:false, icon:'expense'},
+  {t:'Walk-in · Rice 5kg', sub:'Cash sale · this morning', amt:'+₹310', pos:true, icon:'sale'},
+];
+function txIcon(kind){
+  if(kind==='sale') return '<svg class="icon" viewBox="0 0 24 24" style="stroke:#2c6b4a"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>';
+  if(kind==='credit') return '<svg class="icon" viewBox="0 0 24 24" style="stroke:#9e343b"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/></svg>';
+  return '<svg class="icon" viewBox="0 0 24 24" style="stroke:#9e343b"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>';
+}
+function iconBg(kind){ return kind==='sale' ? 'rgba(62,139,99,.16)' : 'rgba(198,71,79,.14)'; }
+function renderRecent(){
+  const box = document.getElementById('homeRecent');
+  box.innerHTML = '';
+  recentTx.slice(0,5).forEach(tx=>{
+    const row = document.createElement('div');
+    row.className = 'tx-row';
+    row.innerHTML = `<div class="tx-ic" style="background:${iconBg(tx.icon)}">${txIcon(tx.icon)}</div>
+      <div class="tx-info"><div class="t1">${tx.t}</div><div class="t2">${tx.sub}</div></div>
+      <div class="tx-amt ${tx.pos?'pos':'neg'}">${tx.amt}</div>`;
+    box.appendChild(row);
+  });
+}
+renderRecent();
+
+/* ------------ bar chart ------------ */
+function renderBars(){
+  const wrap = document.getElementById('barsChart');
+  wrap.innerHTML = '';
+  const max = Math.max(...monthly.map(m=>m.v));
+  monthly.forEach((m,i)=>{
+    const col = document.createElement('div');
+    col.className = 'bar-col';
+    const h = Math.round((m.v/max)*100);
+    col.innerHTML = `<div class="bar" style="height:${h}px;"></div><div class="m">${m.m}</div>`;
+    wrap.appendChild(col);
+  });
+  requestAnimationFrame(()=>{
+    setTimeout(()=>{
+      document.querySelectorAll('#barsChart .bar').forEach((b,i)=>{
+        setTimeout(()=>{ b.style.transform='scaleY(1)'; }, i*90);
+      });
+    }, 80);
+  });
+}
+renderBars();
+
+/* ------------ seasonality grid ------------ */
+function seasonColor(t){
+  // t: 0 (comfortable) -> 1 (tight)
+  if(t < .35) return {bg:'#CFE8DA', fg:'#2C6B4A'};
+  if(t < .55) return {bg:'#F3DFAE', fg:'#8a5c14'};
+  if(t < .7) return {bg:'#F0C08B', fg:'#8a4a14'};
+  return {bg:'#EFC0C3', fg:'#9E343B'};
+}
+function renderSeason(){
+  const wrap = document.getElementById('seasonGrid');
+  wrap.innerHTML = '';
+  seasonMonths.forEach(s=>{
+    const c = seasonColor(s.t);
+    const cell = document.createElement('div');
+    cell.className = 'season-cell';
+    cell.style.background = c.bg;
+    cell.style.color = c.fg;
+    cell.textContent = s.m;
+    wrap.appendChild(cell);
+  });
+}
+renderSeason();
+
+/* ------------ credit gauge ------------ */
+function renderGauge(score){
+  const arc = document.getElementById('gaugeArc');
+  const full = 239; // approx path length
+  const offset = full - (full * (score/100));
+  requestAnimationFrame(()=>{
+    setTimeout(()=>{ arc.style.transition = 'stroke-dashoffset 1.1s cubic-bezier(.22,.85,.32,1)'; arc.style.strokeDashoffset = offset; }, 150);
+  });
+}
+renderGauge(64);
+
+/* ============================================================
+   TAB SWITCHING
+============================================================ */
+function goTab(name){
+  document.querySelectorAll('.screen').forEach(s=> s.classList.toggle('active', s.dataset.screen===name));
+  document.querySelectorAll('.pn-btn').forEach(b=> b.classList.toggle('active', b.dataset.tab===name));
+  document.querySelectorAll('.demo-step').forEach(s=> s.classList.toggle('active', s.dataset.tab===name));
+  const body = document.querySelector('.phone-body');
+  if(body) body.scrollTop = 0;
+  if(name === 'books'){ renderBars(); }
+  if(name === 'score'){ renderGauge(64); }
+}
+document.querySelectorAll('.demo-step').forEach(step=>{
+  step.addEventListener('click', ()=> goTab(step.dataset.tab));
+});
+
+/* ============================================================
+   OFFLINE TOGGLE
+============================================================ */
+let isOffline = false;
+function toggleOffline(){
+  isOffline = !isOffline;
+  const btn = document.getElementById('offlineBtn');
+  btn.classList.toggle('offline-on', isOffline);
+  if(isOffline){
+    toast('Offline mode on — entries will queue and sync later',
+      '<svg class="icon" viewBox="0 0 24 24"><path d="M1 1l22 22"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.58 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg>');
+  } else {
+    toast('Back online — 3 queued entries synced');
+  }
+}
+
+/* ============================================================
+   VOICE DEMO FLOW
+============================================================ */
+function startListening(){
+  const btn = document.getElementById('micBtn');
+  const status = document.getElementById('micStatus');
+  const wave = document.getElementById('wave');
+  const card = document.getElementById('parseCard');
+  card.classList.remove('show');
+  btn.classList.add('listening');
+  wave.classList.add('show');
+  status.textContent = 'Listening…';
+
+  setTimeout(()=>{
+    btn.classList.remove('listening');
+    wave.classList.remove('show');
+    status.textContent = isOffline ? 'Captured offline — will parse on sync' : 'Got it — confirm the details below';
+    const phrase = voicePhrases[selectedLang] || voicePhrases.hi;
+    document.getElementById('parseNative').textContent = phrase.native;
+    document.getElementById('parseGloss').textContent = phrase.gloss;
+    card.classList.add('show');
+  }, 1700);
+}
+
+function cancelParse(){
+  document.getElementById('parseCard').classList.remove('show');
+  document.getElementById('micStatus').textContent = 'Discarded. Tap the mic to try again.';
+}
+
+function confirmParse(){
+  document.getElementById('parseCard').classList.remove('show');
+  document.getElementById('micStatus').textContent = 'Tap the mic and say a sale, expense or udhaar';
+  voiceLogCount++;
+
+  // update home stats
+  homeStats.sales += 90;
+  homeStats.expenses = homeStats.expenses;
+  document.getElementById('homeSales').textContent = '₹' + homeStats.sales.toLocaleString('en-IN');
+  const profit = homeStats.sales - homeStats.expenses;
+  document.getElementById('homeProfit').textContent = '₹' + profit.toLocaleString('en-IN');
+
+  recentTx.unshift({t:'Ramesh Kumar · Sugar 2kg', sub:'Cash sale · just now', amt:'+₹90', pos:true, icon:'sale'});
+  renderRecent();
+
+  const vr = document.getElementById('voiceRecent');
+  vr.style.color = 'var(--paper-ink)';
+  vr.innerHTML = `<div class="tx-row"><div class="tx-ic" style="background:rgba(62,139,99,.16)">${txIcon('sale')}</div><div class="tx-info"><div class="t1">Ramesh Kumar · Sugar 2kg</div><div class="t2">Added ${voiceLogCount>1? voiceLogCount+' entries so far':'just now'}</div></div><div class="tx-amt pos">+₹90</div></div>`;
+
+  toast(isOffline ? 'Saved offline — will sync when back online' : 'Added to today\\'s khata');
+}
+
+/* ============================================================
+   MODALS
+============================================================ */
+function openModal(id){
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id){
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.querySelectorAll('.modal-overlay').forEach(ov=>{
+  ov.addEventListener('click', (e)=>{ if(e.target===ov) closeModal(ov.id); });
+});
+document.addEventListener('keydown', (e)=>{
+  if(e.key==='Escape'){ document.querySelectorAll('.modal-overlay.open').forEach(ov=> closeModal(ov.id)); }
+});
+
+/* onboarding flow */
+function openOnboard(){
+  onbNext(1);
+  openModal('onboardOverlay');
+}
+function onbNext(step){
+  [1,2,3].forEach(n=>{
+    document.getElementById('onbStep'+n).style.display = (n===step) ? 'block' : 'none';
+  });
+  const segs = document.querySelectorAll('#onbTrack .seg');
+  segs.forEach((s,i)=> s.classList.toggle('done', i < step));
+}
+function selectRole(el){
+  document.querySelectorAll('.role-opt').forEach(r=> r.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function finishOnboard(){
+  closeModal('onboardOverlay');
+  toast('Shop helper added — limited access, owner controls stay locked');
+}
+
+/* report flow */
+function openReport(){ openModal('reportOverlay'); }
+function downloadReport(){
+  const content =
+`MEENA STORES — MONTHLY STATEMENT
+Generated by KhataSaathi
+Statement period: Apr - Sep 2026
+
+Average monthly sales:      Rs. 1,18,400
+Average monthly expenses:   Rs. 41,900
+Outstanding udhaar:         Rs. 5,250
+Months of history:          6
+Average net profit:         Rs. 76,500
+
+This report is generated automatically from voice-logged
+transactions and represents the merchant's own recorded
+activity, reconciled daily.`;
+  const blob = new Blob([content], {type:'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'KhataSaathi-Report-MeenaStores.txt';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  toast('Report downloaded');
+}
+</script>
+</body>
+</html>
